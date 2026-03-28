@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buck & Boost Converter Interaktiv</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a1a;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden}
+.header{text-align:center;padding:24px 10px 10px;background:linear-gradient(135deg,#1a1a2e,#16213e)}
+.header h1{font-size:2rem;background:linear-gradient(90deg,#00d2ff,#7b2ff7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header p{color:#888;font-size:.85rem;margin-top:4px}
+.tabs{display:flex;justify-content:center;gap:10px;padding:15px}
+.tab{padding:10px 28px;border:2px solid #333;border-radius:25px;cursor:pointer;font-weight:600;transition:all .3s;background:transparent;color:#aaa;font-size:.95rem;user-select:none}
+.tab.active{border-color:#00d2ff;color:#00d2ff;background:rgba(0,210,255,.08)}
+.tab:hover{border-color:#00d2ff88}
+.container{max-width:900px;margin:0 auto;padding:0 15px 30px}
+.circuit-box{background:#111125;border-radius:16px;border:1px solid #222;padding:20px;margin-bottom:20px}
+.circuit-box h2{text-align:center;margin-bottom:12px;font-size:1.1rem;color:#7b2ff7}
+svg.circuit{width:100%;height:auto;display:block}
+.wire{stroke:#4a9eff;stroke-width:2.5;fill:none}
+.inductor{stroke:#ff6b6b;stroke-width:2.5;fill:none}
+.capacitor-plate{stroke:#ffd93d;stroke-width:3}
+.switch-line{stroke:#888;stroke-width:3;stroke-linecap:round}
+.mosfet-body{fill:#2a2a40;stroke:#00d2ff;stroke-width:1.5}
+.node-label{font-size:11px;fill:#aaa;font-family:monospace}
+.val-label{font-size:10px;fill:#00d2ff;font-family:monospace;font-weight:700}
+.current-dot{fill:#00ff88;filter:drop-shadow(0 0 4px #00ff88);transition:opacity .15s}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px}
+@media(max-width:600px){.controls{grid-template-columns:1fr}}
+.control-card{background:#111125;border-radius:12px;border:1px solid #222;padding:16px}
+.control-card label{display:block;color:#888;font-size:.8rem;margin-bottom:8px}
+.control-card .value{font-size:1.4rem;font-weight:700;color:#00d2ff}
+.control-card input[type=range]{width:100%;margin-top:8px;accent-color:#7b2ff7;height:6px;cursor:pointer}
+.waveform-box{background:#111125;border-radius:12px;border:1px solid #222;padding:15px;margin-bottom:15px}
+.waveform-box h3{font-size:.9rem;color:#888;margin-bottom:10px}
+canvas.wave{width:100%;height:120px;border-radius:8px;background:#0a0a18;display:block}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:15px}
+.info-card{background:#0d0d20;border-radius:10px;padding:12px;text-align:center;border:1px solid #1a1a3a}
+.info-card .label{font-size:.7rem;color:#666;text-transform:uppercase;letter-spacing:.5px}
+.info-card .val{font-size:1.2rem;font-weight:700;margin-top:4px}
+.vin{color:#ff9f43}.vout{color:#00ff88}.il{color:#ff6b6b}.eff{color:#7b2ff7}
+.switch-btn{display:block;margin:15px auto 0;padding:10px 30px;background:linear-gradient(135deg,#7b2ff7,#00d2ff);border:none;border-radius:25px;color:#fff;font-weight:700;font-size:1rem;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.switch-btn:hover{transform:scale(1.05);box-shadow:0 0 20px #7b2ff744}
+.switch-btn:active{transform:scale(.97)}
+.hidden{display:none}
+.legend{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:10px 0;font-size:.75rem;color:#888}
+.legend span{display:flex;align-items:center;gap:4px}
+.legend .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>Buck &amp; Boost Converter</h1>
+<p>Interaktive Schaltungsanimation mit Echtzeit-Wellenformen</p>
+</div>
+
+<div class="tabs">
+<div class="tab active" data-mode="buck">Buck Converter</div>
+<div class="tab" data-mode="boost">Boost Converter</div>
+</div>
+
+<div class="container">
+<div class="circuit-box" id="buckCircuit">
+<h2>Buck Converter — Schaltung</h2>
+<div class="legend">
+<span><span class="dot" style="background:#ff9f43"></span> V<sub>in</sub></span>
+<span><span class="dot" style="background:#00ff88"></span> Stromfluss</span>
+<span><span class="dot" style="background:#ff6b6b"></span> Spule / Diode</span>
+<span><span class="dot" style="background:#ffd93d"></span> Kondensator</span>
+</div>
+<svg class="circuit" viewBox="0 0 800 300">
+<line x1="20" y1="270" x2="780" y2="270" stroke="#334" stroke-width="2"/>
+<text x="400" y="292" text-anchor="middle" class="node-label" fill="#556">GND</text>
+<rect x="25" y="50" width="70" height="90" rx="6" fill="none" stroke="#ff9f43" stroke-width="2"/>
+<text x="60" y="90" text-anchor="middle" class="val-label" fill="#ff9f43">V<tspan font-size="7" dy="2">in</tspan></text>
+<text x="60" y="112" text-anchor="middle" class="val-label" fill="#ff9f43" id="buckVinVal">24V</text>
+<circle cx="60" cy="30" r="5" fill="#ff9f43"/>
+<text x="60" y="22" text-anchor="middle" class="node-label" fill="#ff9f43">+</text>
+<line x1="60" y1="30" x2="60" y2="50" class="wire"/>
+<line x1="60" y1="140" x2="60" y2="270" class="wire"/>
+<line x1="60" y1="30" x2="195" y2="30" class="wire"/>
+<rect x="195" y="8" width="55" height="50" rx="4" class="mosfet-body" id="buckMosfet"/>
+<line x1="205" y1="23" x2="240" y2="23" class="switch-line" id="bSL1"/>
+<line x1="205" y1="35" x2="240" y2="35" class="switch-line" id="bSL2"/>
+<line x1="205" y1="47" x2="240" y2="47" class="switch-line" id="bSL3"/>
+<text x="222" y="2" text-anchor="middle" class="val-label" fill="#ff9f43">Q<tspan font-size="7">1</tspan></text>
+<line x1="222" y1="8" x2="222" y2="-8" stroke="#ff9f43" stroke-width="1.5" stroke-dasharray="3,2"/>
+<polygon points="222,-8 217,-1 227,-1" fill="#ff9f43"/>
+<line x1="250" y1="33" x2="250" y2="58" class="wire"/>
+<line x1="250" y1="58" x2="250" y2="270" class="wire"/>
+<line x1="250" y1="30" x2="330" y2="30" class="wire"/>
+<line x1="330" y1="30" x2="330" y2="120" class="wire"/>
+<polygon points="310,120 350,120 330,155" fill="#ff6b6b33" stroke="#ff6b6b" stroke-width="2"/>
+<line x1="310" y1="100" x2="350" y2="100" stroke="#ff6b6b" stroke-width="2.5"/>
+<text x="362" y="130" class="val-label" fill="#ff6b6b">D</text>
+<line x1="330" y1="155" x2="330" y2="270" class="wire"/>
+<line x1="250" y1="30" x2="380" y2="30" class="wire"/>
+<path d="M380,30 Q398,-5 416,30 Q434,-5 452,30 Q470,-5 488,30 Q506,-5 524,30" class="inductor"/>
+<text x="452" y="-10" text-anchor="middle" class="val-label" fill="#ff6b6b">L = 100µH</text>
+<line x1="524" y1="30" x2="590" y2="30" class="wire"/>
+<line x1="590" y1="30" x2="590" y2="100" class="wire"/>
+<line x1="560" y1="100" x2="620" y2="100" class="capacitor-plate"/>
+<line x1="560" y1="118" x2="620" y2="118" class="capacitor-plate"/>
+<line x1="590" y1="118" x2="590" y2="270" class="wire"/>
+<text x="630" y="112" class="val-label" fill="#ffd93d">C = 10µF</text>
+<line x1="590" y1="30" x2="700" y2="30" class="wire"/>
+<rect x="700" y="15" width="55" height="30" rx="4" fill="none" stroke="#00ff88" stroke-width="2"/>
+<text x="728" y="36" text-anchor="middle" class="val-label" fill="#00ff88">R<tspan font-size="7">L</tspan></text>
+<line x1="728" y1="45" x2="728" y2="270" class="wire"/>
+<text x="728" y="10" text-anchor="middle" class="val-label" fill="#00ff88">V<tspan font-size="7" dy="2">out</tspan></text>
+<text x="728" y="-4" text-anchor="middle" class="val-label" fill="#00ff88" id="buckVoutVal">12V</text>
+<circle r="5" class="current-dot" id="bD1" cx="-50" cy="-50"/>
+<circle r="5" class="current-dot" id="bD2" cx="-50" cy="-50"/>
+<circle r="4" class="current-dot" id="bD3" cx="-50" cy="-50"/>
+<circle r="4" class="current-dot" id="bD4" cx="-50" cy="-50"/>
+</svg>
+</div>
+
+<div class="circuit-box hidden" id="boostCircuit">
+<h2>Boost Converter — Schaltung</h2>
+<div class="legend">
+<span><span class="dot" style="background:#ff9f43"></span> V<sub>in</sub></span>
+<span><span class="dot" style="background:#00ff88"></span> Stromfluss</span>
+<span><span class="dot" style="background:#ff6b6b"></span> Spule / Diode</span>
+<span><span class="dot" style="background:#ffd93d"></span> 
