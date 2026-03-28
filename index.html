@@ -3,124 +3,276 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Buck & Boost Converter Interaktiv</title>
+<title>Buck &amp; Boost Converter</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a1a;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden}
-.header{text-align:center;padding:24px 10px 10px;background:linear-gradient(135deg,#1a1a2e,#16213e)}
-.header h1{font-size:2rem;background:linear-gradient(90deg,#00d2ff,#7b2ff7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.header p{color:#888;font-size:.85rem;margin-top:4px}
+body{background:#0a0a1a;color:#e0e0e0;font-family:system-ui,sans-serif}
+.hd{text-align:center;padding:24px;background:linear-gradient(135deg,#1a1a2e,#16213e)}
+.hd h1{font-size:2rem;background:linear-gradient(90deg,#00d2ff,#7b2ff7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hd p{color:#888;font-size:.85rem;margin-top:4px}
 .tabs{display:flex;justify-content:center;gap:10px;padding:15px}
-.tab{padding:10px 28px;border:2px solid #333;border-radius:25px;cursor:pointer;font-weight:600;transition:all .3s;background:transparent;color:#aaa;font-size:.95rem;user-select:none}
-.tab.active{border-color:#00d2ff;color:#00d2ff;background:rgba(0,210,255,.08)}
-.tab:hover{border-color:#00d2ff88}
-.container{max-width:900px;margin:0 auto;padding:0 15px 30px}
-.circuit-box{background:#111125;border-radius:16px;border:1px solid #222;padding:20px;margin-bottom:20px}
-.circuit-box h2{text-align:center;margin-bottom:12px;font-size:1.1rem;color:#7b2ff7}
-svg.circuit{width:100%;height:auto;display:block}
-.wire{stroke:#4a9eff;stroke-width:2.5;fill:none}
-.inductor{stroke:#ff6b6b;stroke-width:2.5;fill:none}
-.capacitor-plate{stroke:#ffd93d;stroke-width:3}
-.switch-line{stroke:#888;stroke-width:3;stroke-linecap:round}
-.mosfet-body{fill:#2a2a40;stroke:#00d2ff;stroke-width:1.5}
-.node-label{font-size:11px;fill:#aaa;font-family:monospace}
-.val-label{font-size:10px;fill:#00d2ff;font-family:monospace;font-weight:700}
-.current-dot{fill:#00ff88;filter:drop-shadow(0 0 4px #00ff88);transition:opacity .15s}
-.controls{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px}
-@media(max-width:600px){.controls{grid-template-columns:1fr}}
-.control-card{background:#111125;border-radius:12px;border:1px solid #222;padding:16px}
-.control-card label{display:block;color:#888;font-size:.8rem;margin-bottom:8px}
-.control-card .value{font-size:1.4rem;font-weight:700;color:#00d2ff}
-.control-card input[type=range]{width:100%;margin-top:8px;accent-color:#7b2ff7;height:6px;cursor:pointer}
-.waveform-box{background:#111125;border-radius:12px;border:1px solid #222;padding:15px;margin-bottom:15px}
-.waveform-box h3{font-size:.9rem;color:#888;margin-bottom:10px}
-canvas.wave{width:100%;height:120px;border-radius:8px;background:#0a0a18;display:block}
-.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:15px}
-.info-card{background:#0d0d20;border-radius:10px;padding:12px;text-align:center;border:1px solid #1a1a3a}
-.info-card .label{font-size:.7rem;color:#666;text-transform:uppercase;letter-spacing:.5px}
-.info-card .val{font-size:1.2rem;font-weight:700;margin-top:4px}
-.vin{color:#ff9f43}.vout{color:#00ff88}.il{color:#ff6b6b}.eff{color:#7b2ff7}
-.switch-btn{display:block;margin:15px auto 0;padding:10px 30px;background:linear-gradient(135deg,#7b2ff7,#00d2ff);border:none;border-radius:25px;color:#fff;font-weight:700;font-size:1rem;cursor:pointer;transition:transform .2s,box-shadow .2s}
-.switch-btn:hover{transform:scale(1.05);box-shadow:0 0 20px #7b2ff744}
-.switch-btn:active{transform:scale(.97)}
-.hidden{display:none}
-.legend{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:10px 0;font-size:.75rem;color:#888}
-.legend span{display:flex;align-items:center;gap:4px}
-.legend .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.tab{padding:10px 28px;border:2px solid #333;border-radius:25px;cursor:pointer;font-weight:600;color:#aaa;font-size:.95rem}
+.tab.on{border-color:#00d2ff;color:#00d2ff;background:rgba(0,210,255,.08)}
+.ct{max-width:920px;margin:0 auto;padding:0 15px 30px}
+.cb{background:#111125;border-radius:16px;border:1px solid #222;padding:20px;margin-bottom:20px}
+.cb h2{text-align:center;margin-bottom:12px;font-size:1.1rem;color:#7b2ff7}
+svg{width:100%;height:auto;display:block}
+.w{stroke:#4a9eff;stroke-width:2.5;fill:none}
+.ind{stroke:#ff6b6b;stroke-width:2.5;fill:none}
+.cp{stroke:#ffd93d;stroke-width:3}
+.sl{stroke:#888;stroke-width:3;stroke-linecap:round}
+.mb{fill:#2a2a40;stroke:#00d2ff;stroke-width:1.5}
+.cd{fill:#00ff88;filter:drop-shadow(0 0 4px #00ff88)}
+.ctr{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px}
+@media(max-width:600px){.ctr{grid-template-columns:1fr}}
+.cc{background:#111125;border-radius:12px;border:1px solid #222;padding:16px}
+.cc label{display:block;color:#888;font-size:.8rem;margin-bottom:8px}
+.cc .v{font-size:1.4rem;font-weight:700;color:#00d2ff}
+.cc input[type=range]{width:100%;margin-top:8px;accent-color:#7b2ff7;height:6px;cursor:pointer}
+.wb{background:#111125;border-radius:12px;border:1px solid #222;padding:15px;margin-bottom:15px}
+.wb h3{font-size:.9rem;color:#888;margin-bottom:10px}
+canvas.wv{width:100%;height:120px;border-radius:8px;background:#0a0a18;display:block}
+.ig{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:15px}
+.ic{background:#0d0d20;border-radius:10px;padding:12px;text-align:center;border:1px solid #1a1a3a}
+.ic .l{font-size:.7rem;color:#666;text-transform:uppercase}
+.ic .vv{font-size:1.2rem;font-weight:700;margin-top:4px}
+.sb{display:block;margin:15px auto;padding:10px 30px;background:linear-gradient(135deg,#7b2ff7,#00d2ff);border:none;border-radius:25px;color:#fff;font-weight:700;font-size:1rem;cursor:pointer}
+.hid{display:none}
+.lg{display:flex;gap:16px;justify-content:center;margin:10px 0;font-size:.75rem;color:#888}
+.dt{width:8px;height:8px;border-radius:50%;display:inline-block}
 </style>
 </head>
 <body>
-<div class="header">
-<h1>Buck &amp; Boost Converter</h1>
-<p>Interaktive Schaltungsanimation mit Echtzeit-Wellenformen</p>
-</div>
+<div class="hd"><h1>Buck &amp; Boost Converter</h1><p>Interaktive DC-DC Wandler Simulation</p></div>
+<div class="tabs"><div class="tab on" data-mode="buck">Buck Converter</div><div class="tab" data-mode="boost">Boost Converter</div></div>
+<div class="ct">
+<div class="cb" id="buckBox"><h2>Buck Converter</h2>
+<div class="lg"><span><span class="dt" style="background:#ff9f43"></span> Vin</span><span><span class="dt" style="background:#00ff88"></span> Strom</span><span><span class="dt" style="background:#ff6b6b"></span> L/D</span><span><span class="dt" style="background:#ffd93d"></span> C</span></div>
+<svg viewBox="0 0 800 280">
+<line x1="20" y1="250" x2="780" y2="250" stroke="#334" stroke-width="2"/>
+<text x="400" y="270" text-anchor="middle" font-size="11" fill="#556" font-family="monospace">GND</text>
+<rect x="25" y="40" width="70" height="80" rx="6" fill="none" stroke="#ff9f43" stroke-width="2"/>
+<text x="60" y="76" text-anchor="middle" font-size="11" fill="#ff9f43" font-family="monospace" font-weight="700">Vin</text>
+<text x="60" y="96" text-anchor="middle" font-size="11" fill="#ff9f43" font-family="monospace" font-weight="700" id="bVin">24V</text>
+<circle cx="60" cy="25" r="5" fill="#ff9f43"/>
+<line x1="60" y1="25" x2="60" y2="40" class="w"/>
+<line x1="60" y1="120" x2="60" y2="250" class="w"/>
+<line x1="60" y1="25" x2="195" y2="25" class="w"/>
+<rect x="195" y="5" width="55" height="45" rx="4" class="mb" id="bMos"/>
+<line x1="205" y1="18" x2="240" y2="18" class="sl" id="b1"/>
+<line x1="205" y1="30" x2="240" y2="30" class="sl" id="b2"/>
+<line x1="205" y1="42" x2="240" y2="42" class="sl" id="b3"/>
+<text x="222" y="-1" text-anchor="middle" font-size="10" fill="#ff9f43" font-family="monospace" font-weight="700">Q1</text>
+<line x1="250" y1="28" x2="250" y2="250" class="w"/>
+<line x1="250" y1="25" x2="330" y2="25" class="w"/>
+<line x1="330" y1="25" x2="330" y2="110" class="w"/>
+<polygon points="310,110 350,110 330,140" fill="#ff6b6b33" stroke="#ff6b6b" stroke-width="2"/>
+<line x1="310" y1="92" x2="350" y2="92" stroke="#ff6b6b" stroke-width="2.5"/>
+<text x="362" y="118" font-size="10" fill="#ff6b6b" font-family="monospace" font-weight="700">D</text>
+<line x1="330" y1="140" x2="330" y2="250" class="w"/>
+<line x1="250" y1="25" x2="375" y2="25" class="w"/>
+<path d="M375,25 Q393,-8 411,25 Q429,-8 447,25 Q465,-8 483,25 Q501,-8 519,25" class="ind"/>
+<text x="447" y="-12" text-anchor="middle" font-size="10" fill="#ff6b6b" font-family="monospace" font-weight="700">L=100uH</text>
+<line x1="519" y1="25" x2="585" y2="25" class="w"/>
+<line x1="585" y1="25" x2="585" y2="90" class="w"/>
+<line x1="558" y1="90" x2="612" y2="90" class="cp"/>
+<line x1="558" y1="106" x2="612" y2="106" class="cp"/>
+<line x1="585" y1="106" x2="585" y2="250" class="w"/>
+<text x="622" y="102" font-size="10" fill="#ffd93d" font-family="monospace" font-weight="700">C=10uF</text>
+<line x1="585" y1="25" x2="695" y2="25" class="w"/>
+<rect x="695" y="10" width="55" height="30" rx="4" fill="none" stroke="#00ff88" stroke-width="2"/>
+<text x="722" y="31" text-anchor="middle" font-size="10" fill="#00ff88" font-family="monospace" font-weight="700">RL</text>
+<line x1="722" y1="40" x2="722" y2="250" class="w"/>
+<text x="722" y="5" text-anchor="middle" font-size="10" fill="#00ff88" font-family="monospace" font-weight="700">Vout</text>
+<text x="722" y="-7" text-anchor="middle" font-size="11" fill="#00ff88" font-family="monospace" font-weight="700" id="bVout">12V</text>
+<circle r="5" class="cd" id="bd1" cx="-50" cy="-50"/>
+<circle r="5" class="cd" id="bd2" cx="-50" cy="-50"/>
+<circle r="4" class="cd" id="bd3" cx="-50" cy="-50"/>
+</svg></div>
 
-<div class="tabs">
-<div class="tab active" data-mode="buck">Buck Converter</div>
-<div class="tab" data-mode="boost">Boost Converter</div>
-</div>
+<div class="cb hid" id="boostBox"><h2>Boost Converter</h2>
+<div class="lg"><span><span class="dt" style="background:#ff9f43"></span> Vin</span><span><span class="dt" style="background:#00ff88"></span> Strom</span><span><span class="dt" style="background:#ff6b6b"></span> L/D</span><span><span class="dt" style="background:#ffd93d"></span> C</span></div>
+<svg viewBox="0 0 800 280">
+<line x1="20" y1="250" x2="780" y2="250" stroke="#334" stroke-width="2"/>
+<text x="400" y="270" text-anchor="middle" font-size="11" fill="#556" font-family="monospace">GND</text>
+<rect x="25" y="40" width="70" height="80" rx="6" fill="none" stroke="#ff9f43" stroke-width="2"/>
+<text x="60" y="76" text-anchor="middle" font-size="11" fill="#ff9f43" font-family="monospace" font-weight="700">Vin</text>
+<text x="60" y="96" text-anchor="middle" font-size="11" fill="#ff9f43" font-family="monospace" font-weight="700" id="boVin">12V</text>
+<circle cx="60" cy="25" r="5" fill="#ff9f43"/>
+<line x1="60" y1="25" x2="60" y2="40" class="w"/>
+<line x1="60" y1="120" x2="60" y2="250" class="w"/>
+<line x1="60" y1="25" x2="145" y2="25" class="w"/>
+<path d="M145,25 Q163,-8 181,25 Q199,-8 217,25 Q235,-8 253,25 Q271,-8 289,25" class="ind"/>
+<text x="217" y="-12" text-anchor="middle" font-size="10" fill="#ff6b6b" font-family="monospace" font-weight="700">L=100uH</text>
+<line x1="289" y1="25" x2="375" y2="25" class="w"/>
+<circle cx="375" cy="25" r="4" fill="#4a9eff"/>
+<rect x="350" y="45" width="55" height="45" rx="4" class="mb" id="boMos"/>
+<line x1="360" y1="58" x2="395" y2="58" class="sl" id="o1"/>
+<line x1="360" y1="70" x2="395" y2="70" class="sl" id="o2"/>
+<line x1="360" y1="82" x2="395" y2="82" class="sl" id="o3"/>
+<line x1="377" y1="29" x2="377" y2="45" class="w"/>
+<line x1="377" y1="90" x2="377" y2="250" class="w"/>
+<text x="377" y="108" text-anchor="middle" font-size="10" fill="#ff9f43" font-family="monospace" font-weight="700">Q1</text>
+<line x1="379" y1="25" x2="475" y2="25" class="w"/>
+<polygon points="475,5 475,45 510,25" fill="#ff6b6b33" stroke="#ff6b6b" stroke-width="2"/>
+<line x1="475" y1="5" x2="475" y2="45" stroke="#ff6b6b" stroke-width="2.5"/>
+<text x="490" y="1" font-size="10" fill="#ff6b6b" font-family="monospace" font-weight="700">D</text>
+<line x1="510" y1="25" x2="585" y2="25" class="w"/>
+<line x1="585" y1="25" x2="585" y2="90" class="w"/>
+<line x1="558" y1="90" x2="612" y2="90" class="cp"/>
+<line x1="558" y1="106" x2="612" y2="106" class="cp"/>
+<line x1="585" y1="106" x2="585" y2="250" class="w"/>
+<text x="622" y="102" font-size="10" fill="#ffd93d" font-family="monospace" font-weight="700">C=10uF</text>
+<line x1="585" y1="25" x2="695" y2="25" class="w"/>
+<rect x="695" y="10" width="55" height="30" rx="4" fill="none" stroke="#00ff88" stroke-width="2"/>
+<text x="722" y="31" text-anchor="middle" font-size="10" fill="#00ff88" font-family="monospace" font-weight="700">RL</text>
+<line x1="722" y1="40" x2="722" y2="250" class="w"/>
+<text x="722" y="5" text-anchor="middle" font-size="10" fill="#00ff88" font-family="monospace" font-weight="700">Vout</text>
+<text x="722" y="-7" text-anchor="middle" font-size="11" fill="#00ff88" font-family="monospace" font-weight="700" id="boVout">24V</text>
+<circle r="5" class="cd" id="od1" cx="-50" cy="-50"/>
+<circle r="5" class="cd" id="od2" cx="-50" cy="-50"/>
+<circle r="4" class="cd" id="od3" cx="-50" cy="-50"/>
+</svg></div>
 
-<div class="container">
-<div class="circuit-box" id="buckCircuit">
-<h2>Buck Converter — Schaltung</h2>
-<div class="legend">
-<span><span class="dot" style="background:#ff9f43"></span> V<sub>in</sub></span>
-<span><span class="dot" style="background:#00ff88"></span> Stromfluss</span>
-<span><span class="dot" style="background:#ff6b6b"></span> Spule / Diode</span>
-<span><span class="dot" style="background:#ffd93d"></span> Kondensator</span>
+<div class="ctr">
+<div class="cc"><label>Duty Cycle</label><div class="v" id="dv">50%</div><input type="range" id="ds" min="5" max="95" value="50"></div>
+<div class="cc"><label>Frequenz kHz</label><div class="v" id="fv">50</div><input type="range" id="fs" min="10" max="200" value="50"></div>
+<div class="cc"><label>Vin</label><div class="v" style="color:#ff9f43" id="vv">24 V</div><input type="range" id="vs" min="5" max="48" value="24"></div>
+<div class="cc"><label>RL Ohm</label><div class="v" style="color:#ffd93d" id="rv">10</div><input type="range" id="rs" min="1" max="100" value="10"></div>
 </div>
-<svg class="circuit" viewBox="0 0 800 300">
-<line x1="20" y1="270" x2="780" y2="270" stroke="#334" stroke-width="2"/>
-<text x="400" y="292" text-anchor="middle" class="node-label" fill="#556">GND</text>
-<rect x="25" y="50" width="70" height="90" rx="6" fill="none" stroke="#ff9f43" stroke-width="2"/>
-<text x="60" y="90" text-anchor="middle" class="val-label" fill="#ff9f43">V<tspan font-size="7" dy="2">in</tspan></text>
-<text x="60" y="112" text-anchor="middle" class="val-label" fill="#ff9f43" id="buckVinVal">24V</text>
-<circle cx="60" cy="30" r="5" fill="#ff9f43"/>
-<text x="60" y="22" text-anchor="middle" class="node-label" fill="#ff9f43">+</text>
-<line x1="60" y1="30" x2="60" y2="50" class="wire"/>
-<line x1="60" y1="140" x2="60" y2="270" class="wire"/>
-<line x1="60" y1="30" x2="195" y2="30" class="wire"/>
-<rect x="195" y="8" width="55" height="50" rx="4" class="mosfet-body" id="buckMosfet"/>
-<line x1="205" y1="23" x2="240" y2="23" class="switch-line" id="bSL1"/>
-<line x1="205" y1="35" x2="240" y2="35" class="switch-line" id="bSL2"/>
-<line x1="205" y1="47" x2="240" y2="47" class="switch-line" id="bSL3"/>
-<text x="222" y="2" text-anchor="middle" class="val-label" fill="#ff9f43">Q<tspan font-size="7">1</tspan></text>
-<line x1="222" y1="8" x2="222" y2="-8" stroke="#ff9f43" stroke-width="1.5" stroke-dasharray="3,2"/>
-<polygon points="222,-8 217,-1 227,-1" fill="#ff9f43"/>
-<line x1="250" y1="33" x2="250" y2="58" class="wire"/>
-<line x1="250" y1="58" x2="250" y2="270" class="wire"/>
-<line x1="250" y1="30" x2="330" y2="30" class="wire"/>
-<line x1="330" y1="30" x2="330" y2="120" class="wire"/>
-<polygon points="310,120 350,120 330,155" fill="#ff6b6b33" stroke="#ff6b6b" stroke-width="2"/>
-<line x1="310" y1="100" x2="350" y2="100" stroke="#ff6b6b" stroke-width="2.5"/>
-<text x="362" y="130" class="val-label" fill="#ff6b6b">D</text>
-<line x1="330" y1="155" x2="330" y2="270" class="wire"/>
-<line x1="250" y1="30" x2="380" y2="30" class="wire"/>
-<path d="M380,30 Q398,-5 416,30 Q434,-5 452,30 Q470,-5 488,30 Q506,-5 524,30" class="inductor"/>
-<text x="452" y="-10" text-anchor="middle" class="val-label" fill="#ff6b6b">L = 100µH</text>
-<line x1="524" y1="30" x2="590" y2="30" class="wire"/>
-<line x1="590" y1="30" x2="590" y2="100" class="wire"/>
-<line x1="560" y1="100" x2="620" y2="100" class="capacitor-plate"/>
-<line x1="560" y1="118" x2="620" y2="118" class="capacitor-plate"/>
-<line x1="590" y1="118" x2="590" y2="270" class="wire"/>
-<text x="630" y="112" class="val-label" fill="#ffd93d">C = 10µF</text>
-<line x1="590" y1="30" x2="700" y2="30" class="wire"/>
-<rect x="700" y="15" width="55" height="30" rx="4" fill="none" stroke="#00ff88" stroke-width="2"/>
-<text x="728" y="36" text-anchor="middle" class="val-label" fill="#00ff88">R<tspan font-size="7">L</tspan></text>
-<line x1="728" y1="45" x2="728" y2="270" class="wire"/>
-<text x="728" y="10" text-anchor="middle" class="val-label" fill="#00ff88">V<tspan font-size="7" dy="2">out</tspan></text>
-<text x="728" y="-4" text-anchor="middle" class="val-label" fill="#00ff88" id="buckVoutVal">12V</text>
-<circle r="5" class="current-dot" id="bD1" cx="-50" cy="-50"/>
-<circle r="5" class="current-dot" id="bD2" cx="-50" cy="-50"/>
-<circle r="4" class="current-dot" id="bD3" cx="-50" cy="-50"/>
-<circle r="4" class="current-dot" id="bD4" cx="-50" cy="-50"/>
-</svg>
-</div>
-
-<div class="circuit-box hidden" id="boostCircuit">
-<h2>Boost Converter — Schaltung</h2>
-<div class="legend">
-<span><span class="dot" style="background:#ff9f43"></span> V<sub>in</sub></span>
-<span><span class="dot" style="background:#00ff88"></span> Stromfluss</span>
-<span><span class="dot" style="background:#ff6b6b"></span> Spule / Diode</span>
-<span><span class="dot" style="background:#ffd93d"></span> 
+<button class="sb" id="tb">Pause</button>
+<div class="wb"><h3>Gate Signal</h3><canvas class="wv" id="gc"></canvas></div>
+<div class="wb"><h3>Spulenstrom IL</h3><canvas class="wv" id="cc"></canvas></div>
+<div class="wb"><h3>Vout</h3><canvas class="wv" id="vc"></canvas></div>
+<div class="ig">
+<div class="ic"><div class="l">Vin</div><div class="vv" style="color:#ff9f43" id="iv">24.0 V</div></div>
+<div class="ic"><div class="l">Vout</div><div class="vv" style="color:#00ff88" id="iov">12.0 V</div></div>
+<div class="ic"><div class="l">IL</div><div class="vv" style="color:#ff6b6b" id="ii">1.20 A</div></div>
+<div class="ic"><div class="l">eta</div><div class="vv" style="color:#7b2ff7" id="ie">95%</div></div>
+<div class="ic"><div class="l">Mode</div><div class="vv" style="color:#00ff88" id="im">Buck</div></div>
+<div class="ic"><div class="l">Formula</div><div class="vv" style="color:#ccc;font-size:.7rem" id="iq">Vout=D*Vin</div></div>
+</div></div>
+<script>
+(function(){
+var mode="buck",duty=0.5,freq=50,vin=24,rl=10,run=true,t=0,sw=true;
+var gCtx,cCtx,vCtx,cW,cH;
+function el(id){return document.getElementById(id)}
+function qsa(sel){return document.querySelectorAll(sel)}
+var tabs=qsa(".tab");
+for(var ti=0;ti<tabs.length;ti++){
+  tabs[ti].onclick=function(){
+    for(var tj=0;tj<tabs.length;tj++)tabs[tj].classList.remove("on");
+    this.classList.add("on");
+    mode=this.getAttribute("data-mode");
+    el("buckBox").className="cb"+(mode==="buck"?"":" hid");
+    el("boostBox").className="cb"+(mode==="boost"?"":" hid");
+    el("im").textContent=mode==="buck"?"Buck":"Boost";
+    el("iq").textContent=mode==="buck"?"Vout=D*Vin":"Vout=Vin/(1-D)";
+    upd();
+  };
+}
+el("ds").oninput=function(e){duty=e.target.value/100;upd()};
+el("fs").oninput=function(e){freq=+e.target.value;upd()};
+el("vs").oninput=function(e){vin=+e.target.value;upd()};
+el("rs").oninput=function(e){rl=+e.target.value;upd()};
+el("tb").onclick=function(){run=!run;el("tb").textContent=run?"Pause":"Start"};
+function vo(){return mode==="buck"?duty*vin:vin/(1-duty)}
+function upd(){
+  var v=vo(),il=v/rl,ef=Math.min(98,92+duty*6);
+  el("dv").textContent=(duty*100).toFixed(0)+"%";
+  el("fv").textContent=freq;
+  el("vv").textContent=vin+" V";
+  el("rv").textContent=rl;
+  el("bVin").textContent=vin+"V";
+  el("boVin").textContent=vin+"V";
+  el("bVout").textContent=(mode==="buck"?v:vin*0.5).toFixed(1)+"V";
+  el("boVout").textContent=(mode==="boost"?v:vin*2).toFixed(1)+"V";
+  el("iv").textContent=vin.toFixed(1)+" V";
+  el("iov").textContent=v.toFixed(1)+" V";
+  el("ii").textContent=il.toFixed(2)+" A";
+  el("ie").textContent=ef.toFixed(0)+"%";
+}
+function setup(canvas){
+  var d=window.devicePixelRatio||1;
+  var r=canvas.getBoundingClientRect();
+  canvas.width=r.width*d;canvas.height=r.height*d;
+  var ctx=canvas.getContext("2d");ctx.scale(d,d);
+  return{ctx:ctx,w:r.width,h:r.height};
+}
+function initC(){
+  var a=setup(el("gc"));gCtx=a.ctx;cW=a.w;cH=a.h;
+  var b=setup(el("cc"));cCtx=b.ctx;
+  var c=setup(el("vc"));vCtx=c.ctx;
+}
+var BL=400;
+var gB=new Float32Array(BL);var cB=new Float32Array(BL);var vB=new Float32Array(BL);var bI=0;
+function draw(ctx,buf,col,mn,mx,lbl){
+  ctx.clearRect(0,0,cW,cH);
+  ctx.strokeStyle="#151528";ctx.lineWidth=1;
+  var i;
+  for(i=0;i<cW;i+=40){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,cH);ctx.stroke()}
+  for(i=0;i<cH;i+=20){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(cW,i);ctx.stroke()}
+  ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.shadowColor=col;ctx.shadowBlur=8;
+  ctx.beginPath();var rng=mx-mn||1;
+  for(i=0;i<BL;i++){
+    var idx=(bI+i)%BL,x=(i/BL)*cW,y=cH-((buf[idx]-mn)/rng)*(cH-16)-8;
+    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  }
+  ctx.stroke();ctx.shadowBlur=0;
+  ctx.fillStyle=col;ctx.font="bold 11px monospace";ctx.fillText(lbl,8,16);
+}
+function updSw(on){
+  var c=on?"#00ff88":"#666";
+  var f=on?"drop-shadow(0 0 5px #00ff88)":"none";
+  ["b1","b2","b3","o1","o2","o3"].forEach(function(id){
+    var e=el(id);if(e){e.style.stroke=c;e.style.filter=f}
+  });
+  var bm=el("bMos"),om=el("boMos");
+  if(bm)bm.style.filter=on?"drop-shadow(0 0 10px #00d2ff66)":"none";
+  if(om)om.style.filter=on?"drop-shadow(0 0 10px #00d2ff66)":"none";
+}
+function lerp(p,tt){
+  var seg=tt*(p.length-1);var i=Math.min(Math.floor(seg),p.length-2);var f=seg-i;
+  return[p[i][0]+(p[i+1][0]-p[i][0])*f,p[i][1]+(p[i+1][1]-p[i][1])*f];
+}
+function animDots(){
+  var sp=freq/50;var dt=(t*sp*0.025)%1;var paths,ids,p,tt,xy;
+  if(mode==="buck"){
+    var onP=[[60,25],[195,25],[250,25],[375,25],[447,25],[519,25],[585,25],[695,25],[722,25],[722,250]];
+    var offP=[[250,25],[330,25],[330,110],[330,140],[330,250],[585,250],[585,106],[585,25],[695,25],[722,25]];
+    paths=sw?[onP,onP,[[60,120],[60,250],[780,250]]]:[offP,offP,[[60,250],[780,250],[722,250],[722,25]]];
+    ids=["bd1","bd2","bd3"];
+  }else{
+    var chP=[[60,25],[145,25],[217,25],[289,25],[375,25],[475,25],[510,25],[585,25],[695,25],[722,25],[722,250]];
+    var swP=[[60,25],[145,25],[217,25],[289,25],[375,25],[377,90],[377,250],[60,250]];
+    paths=sw?[swP,swP,[[60,250],[780,250]]]:[chP,chP,[[377,250],[60,250],[60,25],[145,25]]];
+    ids=["od1","od2","od3"];
+  }
+  for(var i=0;i<ids.length;i++){
+    var e=el(ids[i]);p=paths[Math.min(i,paths.length-1)];tt=((dt+i*0.33)%1);xy=lerp(p,tt);
+    e.setAttribute("cx",xy[0]);e.setAttribute("cy",xy[1]);e.style.opacity="1";
+  }
+}
+var lt=0;
+function sim(dt){
+  var per=1/(freq*1000);var tp=(t%per)/per;sw=tp<duty;updSw(sw);
+  var v=vo(),il=v/rl;
+  var rip=sw?(vin-(mode==="buck"?v:0))/0.0001*dt*0.001:-(v-(mode==="boost"?0:vin))/0.0001*dt*0.001;
+  var ii=il+rip*Math.sin(tp*Math.PI*2)*0.35;
+  gB[bI]=sw?1:0;cB[bI]=Math.max(0,ii);vB[bI]=v+Math.sin(tp*Math.PI*2)*v*0.015;
+  bI=(bI+1)%BL;
+}
+function loop(ts){
+  if(!lt)lt=ts;var dt=Math.min(ts-lt,50);lt=ts;
+  if(run){t+=dt*0.001;sim(dt);animDots()}
+  var v=vo(),il=v/rl,mx=Math.max(il*1.6,0.1);
+  draw(gCtx,gB,"#ff9f43",-0.2,1.2,"Gate: "+(sw?"ON":"OFF"));
+  draw(cCtx,cB,"#ff6b6b",0,mx,"IL = "+cB[(bI-1+BL)%BL].toFixed(2)+" A");
+  draw(vCtx,vB,"#00ff88",v*0.88,v*1.12,"Vout = "+v.toFixed(1)+" V");
+  requestAnimationFrame(loop);
+}
+window.addEventListener("resize",initC);
+window.addEventListener("load",function(){initC();upd();requestAnimationFrame(loop)});
+})();
+</script>
+</body></html>
